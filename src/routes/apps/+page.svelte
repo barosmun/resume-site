@@ -29,13 +29,13 @@
       </span>
     </div>
 
-    <div>
+    <!-- <div>
       <span class="badge bg-surface-500 p-2"><a href={base + '/games/tribal'}> <IconCampfire width="32" height="32" /> </a></span>
       <span class="flex-auto">
         <dt class="h6 font-bold">Tribal</dt>
         <dd>A 3D browser game I'm making using <a class="anchor" href="https://threejs.org/">Three.js</a></dd>
       </span>
-    </div>
+    </div> -->
   </dl>
 </div>
   
