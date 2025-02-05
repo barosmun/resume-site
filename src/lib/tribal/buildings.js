@@ -1,14 +1,23 @@
 import * as THREE from 'three';
+import { Villager } from './villager';
+import { stats } from '$lib/tribal/game'
 
 export class Building{
   
   constructor() {
+
     this.model = new THREE.Group();
 
     this.model.name = "building";
     this.model.owner = this;
 
     this.distanceThreshold = 6;
+
+    
+  }
+
+  villagerAction(villager){
+    villager.villagerAction = 0;
   }
   
   
@@ -64,6 +73,19 @@ export class Hut extends Building{
     // this.bb.setFromObject(this.model);
 
   }
+
+  villagerAction(villager){
+    let resource = villager.holding.pop();
+      switch(resource){
+        case ('produce'):
+        case ('grain'):
+        case ('meat'):
+        case ('fish'):
+        case ('egg'):
+          stats[resource] += 1;
+          break;
+      }
+  }
 }
 
 export class Tree extends Building{
@@ -102,6 +124,11 @@ export class Tree extends Building{
     this.bb = new THREE.Box3(new THREE.Vector3(), new THREE.Vector3());
     this.bb.setFromObject(this.model);
 
+  }
+
+  villagerAction(villager){
+    console.log('food for you!');
+    villager.holding.push('produce');
   }
 }
 

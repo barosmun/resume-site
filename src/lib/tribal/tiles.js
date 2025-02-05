@@ -43,5 +43,9 @@ export class TileBasic extends Tile{
     //console.log(this.bb);
 
   }
+
+  villagerAction(villager){
+    villager.villagerAction = 0;
+  }
 }
 

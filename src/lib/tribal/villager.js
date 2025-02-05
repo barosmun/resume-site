@@ -1,4 +1,6 @@
 import * as THREE from 'three';
+import { Hut } from './buildings';
+import { stats } from '$lib/tribal/game'
 
 export class Villager{
   
@@ -6,6 +8,8 @@ export class Villager{
 
     this.selected = false;
     this.holding = [];
+
+    this.action_cooldown = 0;
 
     this.name = String.fromCharCode(97 + (Math.random() * 26) ) + "inkus";
 
@@ -68,6 +72,7 @@ export class Villager{
 
   set_target(target){
     this.target = target;
+    console.log(target)
     this.look_at_target();
     this.atTarget = false;
   }
@@ -208,6 +213,21 @@ export class Villager{
     if(this.velocity.length() < 0.001){
       this.velocity.copy(new THREE.Vector3(0, 0, 0));
     }
+  }
+
+  do_action(){
+    if(this.target == null){
+      return;
+    }
+    if(this.action_cooldown <= 0){
+      this.target.villagerAction(this);
+      this.action_cooldown = 200;
+      console.log(this.holding);
+    }
+    else{
+      this.action_cooldown--;
+    }
+    
   }
   
   

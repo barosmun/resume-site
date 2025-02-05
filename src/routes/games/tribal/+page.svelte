@@ -17,6 +17,7 @@
   import IconStone from '~icons/tabler/mountain';
 
 
+
   let tribalSkills = [
     {
       icon: IconBrandThreejs,
@@ -48,6 +49,8 @@
   import { Villager } from '$lib/tribal/villager';
   import { Building, Hut, Tree } from '$lib/tribal/buildings';
   import { Tile, TileBasic } from '$lib/tribal/tiles';
+  import { stats } from '$lib/tribal/game'
+
 
 	let loading = true;
 	let el : HTMLCanvasElement;
@@ -94,20 +97,6 @@
   let day_count = 0; // 0
 
   let villager_appetite = 3; // 3
-  
-
-  let stats = {
-    //foods
-    produce: 50,
-    grain: 0,
-    meat: 25,
-    fish: 0,
-    egg: 0,
-
-
-    wood: 0,
-    stone: 0
-  }
 
   let max_villagers = 6;
   let villagers: Villager[] = [];
@@ -485,6 +474,9 @@
           if (!villager.atTarget) {
             villager.move_to_target();
           }
+          else{
+            villager.do_action();
+          }
 
           if (!villager.steeringForces.equals(new THREE.Vector3(0, 0, 0))) {
             villager.add_steering_forces();
@@ -515,6 +507,7 @@
           }
 
           sun_group.rotation.y = 2 * Math.PI * (day_time / day_length);
+          
 
           let timeFromNoon = (Math.abs((day_length/2) - day_time)) / (day_length/2);
 
@@ -524,7 +517,14 @@
           let sunNewColor = `#${sunNewRed.toString(16).padStart(2, '0')}${sunNewGreen.toString(16).padStart(2, '0')}${sunNewBlue.toString(16).padStart(2, '0')}`;
           sun.color = new THREE.Color(sunNewColor);
 
-          // scene.background = new THREE.Color(sky_background)
+          // let skyNewRed = Math.floor(0x80 * (Math.max(0, 1 - (Math.abs(0.7 - timeFromNoon) / 0.7))) + 0x00); //0x4C
+          let skyNewRed = 0x10 //0xBC
+          let skyNewGreen = Math.floor(0xA0 * (1-timeFromNoon) + 0x00); //0xBC
+          let skyNewBlue = Math.floor(0xE0 * (1-timeFromNoon) + 0x15); //0xF0
+          let skyNewColor = `#${skyNewRed.toString(16).padStart(2, '0')}${skyNewGreen.toString(16).padStart(2, '0')}${skyNewBlue.toString(16).padStart(2, '0')}`;
+
+          scene.background = new THREE.Color(skyNewColor)
+
 
         }
 
@@ -536,7 +536,9 @@
             console.log("DESTROY WebGL");
             renderer.forceContextLoss();
             renderer.clear();
-            scene.remove(...scene.children)
+            scene.remove(...scene.children);
+            villagers = [];
+            buildings = [];
           }
       }
 
@@ -607,14 +609,14 @@
 
         <h3 class="h3 underline">Villagers</h3>
         {#each villagers as villager (villager)}
-          <h4 class="h4 {villager.selected ? 'text-secondary-500' : ''}">- {villager.name}</h4>
+          <h4 class="h4 {villager.selected ? 'text-secondary-500' : ''}">- {villager.name} | {villager.holding} | {villager.action_cooldown}</h4>
         {/each}
 
       </div>
     
       <div class="max-sm:hidden">
         <h2 class="h2"> Tribal </h2>
-        <p class="text-xs"> v0.0.3 </p>
+        <p class="text-xs"> v0.0.4 </p>
         <progress value={day_time} max={day_length} />
         <h4 class="h4"> Day {day_count+1} </h4>
       </div>
